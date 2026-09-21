@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>About — My Azure App</title>
+  <meta name="description" content="What this project is and how it's deployed.">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+  <header class="site">
+    <div class="wrap">
+      <a class="brand" href="/">My Azure App</a>
+      <nav class="site">
+        <a href="/">Home</a>
+        <a href="/about" aria-current="page">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <span class="tag">About</span>
+    <h1>How this gets deployed</h1>
+    <p class="lede">
+      No FTP, no server to log into. The repository is the source of truth.
+    </p>
+
+    <h2>The pipeline</h2>
+    <div class="card">
+      <p style="margin-top:0">
+        <code>git push</code> → GitHub Actions runs the workflow Azure added to
+        <code>.github/workflows/</code> → the workflow uploads the files using a
+        deployment token stored as a repo secret → Azure publishes them to its CDN.
+      </p>
+      <p style="margin-bottom:0">
+        Roughly 60–90 seconds end to end. Open a pull request instead of pushing to
+        <code>main</code> and Azure builds a separate preview URL for that branch,
+        which disappears when the PR closes.
+      </p>
+    </div>
+
+    <h2>Why Static Web Apps</h2>
+    <p>
+      There is no server process here, so there is nothing to keep running, nothing
+      to patch, and nothing to pay for. The free tier covers 100&nbsp;GB of bandwidth
+      a month, a custom domain, and SSL. When the app eventually needs server-side
+      code, it gets added as serverless functions in the same repository rather than
+      as a separate thing to deploy.
+    </p>
+
+    <p><a href="/">← Back home</a></p>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">Running on Azure Static Web Apps · Free tier</div>
+  </footer>
+
+</body>
+</html>

@@ -1,43 +1,56 @@
 <!DOCTYPE html>
-<html><head>
-<style>
-table, th, td {
-  border: 1px solid black;
-}
-</style>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My Azure App</title>
+  <meta name="description" content="A small app built step by step on Azure Static Web Apps.">
+  <link rel="stylesheet" href="/styles.css">
 </head>
-  <head><meta charset="utf-8"><title>My App</title></head>
-  <body><h1>Hello from Azure</h1></body>
-  <body><h2>This is my new website</h2></body>
-  <body><h3>I am learning how to build stuff and write HTML code!</h3></body>
-  <button type="button">This is a button!</button>
-  <br>
-  <table>This is a table!</table>
-  <table>
-    <tr>
-      <th>
-        Variable 1
-      </th>
-      <th>
-        Variable 2
-      </th>
-    </tr>
-    <tr>
-      <th>
-        Value 1
-      </th>
-      <th>
-        Value 2
-      </th>
-    </tr>
-  </table>
-  <label for="Cars">Here you can choose a car:</label>
+<body>
 
-<select id="Cars">
-  <option value="volvo">Volvo</option>
-  <option value="saab">Saab</option>
-  <option value="opel">Opel</option>
-  <option value="audi">Audi</option>
-  <option value="ferrari">Ferrari</option>
-</select>
+  <header class="site">
+    <div class="wrap">
+      <a class="brand" href="/">My Azure App</a>
+      <nav class="site">
+        <a href="/" aria-current="page">Home</a>
+        <a href="/about">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <span class="tag">Step 1</span>
+    <h1>Built one step at a time</h1>
+    <p class="lede">
+      This page is served from Azure's global CDN. Every push to
+      <code>main</code> rebuilds and redeploys it automatically.
+    </p>
+
+    <h2>Where this is going</h2>
+    <ul class="steps">
+      <li class="done">Publish a static page</li>
+      <li class="done">Multiple pages, stylesheet, routing rules</li>
+      <li>A build step with Vite</li>
+      <li>A serverless API</li>
+      <li>A database</li>
+      <li>Secrets and config</li>
+      <li>Authentication</li>
+      <li>Custom domain and preview environments</li>
+      <li>Monitoring and CI tests</li>
+      <li>Infrastructure as code</li>
+    </ul>
+
+    <div class="card">
+      <strong>Try it:</strong> visit a URL that doesn't exist, like
+      <code>/nonsense</code>. You'll get the custom 404 page rather than
+      Azure's default — that's <code>staticwebapp.config.json</code> doing its job.
+    </div>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">Running on Azure Static Web Apps · Free tier</div>
+  </footer>
+
+</body>
 </html>
