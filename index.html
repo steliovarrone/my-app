@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>My Azure App</title>
   <meta name="description" content="A small app built step by step on Azure Static Web Apps.">
-  <link rel="stylesheet" href="/styles.css">
+  <!-- No <link rel="stylesheet"> any more. main.js imports the CSS, and Vite
+       injects the right tag here at build time. -->
 </head>
 <body>
 
@@ -20,31 +21,28 @@
   </header>
 
   <main class="wrap">
-    <span class="tag">Step 1</span>
-    <h1>Built one step at a time</h1>
+    <span class="tag">Step 2</span>
+    <h1>Now there's a build step</h1>
     <p class="lede">
-      This page is served from Azure's global CDN. Every push to
-      <code>main</code> rebuilds and redeploys it automatically.
+      The files in this repository are no longer the files Azure serves.
+      Vite turns them into <code>dist/</code> first.
     </p>
 
-    <h2>Where this is going</h2>
-    <ul class="steps">
-      <li class="done">Publish a static page</li>
-      <li class="done">Multiple pages, stylesheet, routing rules</li>
-      <li>A build step with Vite</li>
-      <li>A serverless API</li>
-      <li>A database</li>
-      <li>Secrets and config</li>
-      <li>Authentication</li>
-      <li>Custom domain and preview environments</li>
-      <li>Monitoring and CI tests</li>
-      <li>Infrastructure as code</li>
-    </ul>
+    <div class="meter" data-progress>
+      <div class="meter-track"><div class="meter-bar" data-progress-bar></div></div>
+      <span class="meter-label" data-progress-label></span>
+    </div>
+
+    <!-- Empty on purpose. main.js fills it from src/steps.js.
+         View source on the deployed page: it's still empty there too. -->
+    <ul class="steps" data-steps></ul>
 
     <div class="card">
-      <strong>Try it:</strong> visit a URL that doesn't exist, like
-      <code>/nonsense</code>. You'll get the custom 404 page rather than
-      Azure's default — that's <code>staticwebapp.config.json</code> doing its job.
+      <strong>Look in the page source.</strong> The list above is missing from the
+      HTML — it's built by JavaScript after load. The stylesheet link and script
+      tag, meanwhile, point at filenames with hashes in them that don't exist
+      anywhere in your repo. That gap between source and output is the whole
+      point of this step. Currently serving: <code data-build></code>.
     </div>
   </main>
 
@@ -52,5 +50,6 @@
     <div class="wrap">Running on Azure Static Web Apps · Free tier</div>
   </footer>
 
+  <script type="module" src="/src/main.js"></script>
 </body>
 </html>

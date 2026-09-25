@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My Azure App</title>
+  <meta name="description" content="A small app built step by step on Azure Static Web Apps.">
+  <!-- No <link rel="stylesheet"> any more. main.js imports the CSS, and Vite
+       injects the right tag here at build time. -->
+  <script type="module" crossorigin src="/assets/main-C-fBX2-C.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/main-CuBSxSz2.css">
+</head>
+<body>
+
+  <header class="site">
+    <div class="wrap">
+      <a class="brand" href="/">My Azure App</a>
+      <nav class="site">
+        <a href="/" aria-current="page">Home</a>
+        <a href="/about">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <span class="tag">Step 2</span>
+    <h1>Now there's a build step</h1>
+    <p class="lede">
+      The files in this repository are no longer the files Azure serves.
+      Vite turns them into <code>dist/</code> first.
+    </p>
+
+    <div class="meter" data-progress>
+      <div class="meter-track"><div class="meter-bar" data-progress-bar></div></div>
+      <span class="meter-label" data-progress-label></span>
+    </div>
+
+    <!-- Empty on purpose. main.js fills it from src/steps.js.
+         View source on the deployed page: it's still empty there too. -->
+    <ul class="steps" data-steps></ul>
+
+    <div class="card">
+      <strong>Look in the page source.</strong> The list above is missing from the
+      HTML — it's built by JavaScript after load. The stylesheet link and script
+      tag, meanwhile, point at filenames with hashes in them that don't exist
+      anywhere in your repo. That gap between source and output is the whole
+      point of this step. Currently serving: <code data-build></code>.
+    </div>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">Running on Azure Static Web Apps · Free tier</div>
+  </footer>
+
+</body>
+</html>

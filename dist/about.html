@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>About — My Azure App</title>
+  <meta name="description" content="What this project is and how it's built and deployed.">
+  <script type="module" crossorigin src="/assets/main-C-fBX2-C.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/main-CuBSxSz2.css">
+</head>
+<body>
+
+  <header class="site">
+    <div class="wrap">
+      <a class="brand" href="/">My Azure App</a>
+      <nav class="site">
+        <a href="/">Home</a>
+        <a href="/about" aria-current="page">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <span class="tag">About</span>
+    <h1>Source, build, deploy</h1>
+    <p class="lede">
+      Three stages now, where there used to be one.
+    </p>
+
+    <h2>What happens on push</h2>
+    <div class="card">
+      <p style="margin-top:0">
+        GitHub Actions checks out the repo, sees <code>package.json</code>, runs
+        <code>npm install</code> and then <code>npm run build</code>. Vite writes
+        the result to <code>dist/</code>. Azure uploads <em>that</em> folder —
+        never your source files.
+      </p>
+      <p style="margin-bottom:0">
+        Which means a build that fails is a deploy that never happens. The
+        previous version stays live. That's a feature.
+      </p>
+    </div>
+
+    <h2>Why the filenames have hashes</h2>
+    <p>
+      Vite names the output <code>index-B3kQ9x1a.js</code>, where the suffix is
+      derived from the file's contents. Change one character of source and the
+      name changes. That lets the CDN cache these files effectively forever,
+      because a new deploy produces new names rather than new contents at the
+      same name — and no user ever gets a stale mix of old and new code.
+    </p>
+
+    <h2>Why <code>staticwebapp.config.json</code> moved</h2>
+    <p>
+      It now lives in <code>public/</code>. Vite copies everything in that folder
+      to the root of <code>dist/</code> untouched, which is exactly where Azure
+      looks for it. Leave it at the repo root and it never reaches the output —
+      which is the single most common reason routing rules silently stop working
+      after adding a build step.
+    </p>
+
+    <p><a href="/">← Back home</a></p>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">Running on Azure Static Web Apps · Free tier</div>
+  </footer>
+
+</body>
+</html>

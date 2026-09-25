@@ -4,8 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>About — My Azure App</title>
-  <meta name="description" content="What this project is and how it's deployed.">
-  <link rel="stylesheet" href="/styles.css">
+  <meta name="description" content="What this project is and how it's built and deployed.">
 </head>
 <body>
 
@@ -21,32 +20,41 @@
 
   <main class="wrap">
     <span class="tag">About</span>
-    <h1>How this gets deployed</h1>
+    <h1>Source, build, deploy</h1>
     <p class="lede">
-      No FTP, no server to log into. The repository is the source of truth.
+      Three stages now, where there used to be one.
     </p>
 
-    <h2>The pipeline</h2>
+    <h2>What happens on push</h2>
     <div class="card">
       <p style="margin-top:0">
-        <code>git push</code> → GitHub Actions runs the workflow Azure added to
-        <code>.github/workflows/</code> → the workflow uploads the files using a
-        deployment token stored as a repo secret → Azure publishes them to its CDN.
+        GitHub Actions checks out the repo, sees <code>package.json</code>, runs
+        <code>npm install</code> and then <code>npm run build</code>. Vite writes
+        the result to <code>dist/</code>. Azure uploads <em>that</em> folder —
+        never your source files.
       </p>
       <p style="margin-bottom:0">
-        Roughly 60–90 seconds end to end. Open a pull request instead of pushing to
-        <code>main</code> and Azure builds a separate preview URL for that branch,
-        which disappears when the PR closes.
+        Which means a build that fails is a deploy that never happens. The
+        previous version stays live. That's a feature.
       </p>
     </div>
 
-    <h2>Why Static Web Apps</h2>
+    <h2>Why the filenames have hashes</h2>
     <p>
-      There is no server process here, so there is nothing to keep running, nothing
-      to patch, and nothing to pay for. The free tier covers 100&nbsp;GB of bandwidth
-      a month, a custom domain, and SSL. When the app eventually needs server-side
-      code, it gets added as serverless functions in the same repository rather than
-      as a separate thing to deploy.
+      Vite names the output <code>index-B3kQ9x1a.js</code>, where the suffix is
+      derived from the file's contents. Change one character of source and the
+      name changes. That lets the CDN cache these files effectively forever,
+      because a new deploy produces new names rather than new contents at the
+      same name — and no user ever gets a stale mix of old and new code.
+    </p>
+
+    <h2>Why <code>staticwebapp.config.json</code> moved</h2>
+    <p>
+      It now lives in <code>public/</code>. Vite copies everything in that folder
+      to the root of <code>dist/</code> untouched, which is exactly where Azure
+      looks for it. Leave it at the repo root and it never reaches the output —
+      which is the single most common reason routing rules silently stop working
+      after adding a build step.
     </p>
 
     <p><a href="/">← Back home</a></p>
@@ -56,5 +64,6 @@
     <div class="wrap">Running on Azure Static Web Apps · Free tier</div>
   </footer>
 
+  <script type="module" src="/src/main.js"></script>
 </body>
 </html>
