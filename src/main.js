@@ -1,14 +1,10 @@
-// Importing CSS from JavaScript looks wrong the first time you see it.
-// It works because Vite intercepts the import: in dev it injects a <style>
-// tag for instant hot reload, and in the production build it extracts the
-// CSS into its own hashed file and adds a <link> to the HTML for you.
 import './styles.css'
 
 import { steps, progress } from './steps.js'
+import { getStatus, getStats } from './api.js'
 
 // ---------------------------------------------------------------
-// Render the progress ladder, if this page has a slot for it.
-// Both index.html and 404.html load this same bundle, so guard first.
+// Progress ladder (unchanged from step 2)
 // ---------------------------------------------------------------
 const list = document.querySelector('[data-steps]')
 
@@ -32,15 +28,77 @@ if (meter) {
     `${done} of ${total} steps · ${pct}%`
 }
 
-// ---------------------------------------------------------------
-// import.meta.env is replaced at BUILD time, not read at runtime.
-// Look at dist/assets/*.js after building and you'll find the literal
-// string sitting where this expression used to be.
-// ---------------------------------------------------------------
 const stamp = document.querySelector('[data-build]')
-
 if (stamp) {
-  stamp.textContent = import.meta.env.PROD
-    ? 'production build'
-    : 'dev server (hot reload on)'
+  stamp.textContent = import.meta.env.PROD ? 'production build' : 'dev server'
+}
+
+// ---------------------------------------------------------------
+// Server status — proves there is a second machine involved
+// ---------------------------------------------------------------
+const statusOut = document.querySelector('[data-status]')
+
+if (statusOut) {
+  statusOut.textContent = 'asking the server…'
+
+  getStatus()
+    .then((data) => {
+      statusOut.textContent = `${data.runtime} on ${data.platform} · ${data.server_time_utc}`
+    })
+    .catch((err) => {
+      statusOut.textContent = `couldn't reach the API — ${err.message}`
+    })
+}
+
+// ---------------------------------------------------------------
+// Statistics form
+// ---------------------------------------------------------------
+const form = document.querySelector('[data-stats-form]')
+
+if (form) {
+  const input = form.querySelector('textarea')
+  const button = form.querySelector('button')
+  const output = document.querySelector('[data-stats-out]')
+
+  const parse = (raw) =>
+    raw
+      .split(/[\s,;]+/)      // split on spaces, commas, semicolons, newlines
+      .filter(Boolean)
+      .map(Number)
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault()   // stop the browser doing a full page reload
+
+    const values = parse(input.value)
+
+    // A client-side check for fast feedback. Note that the server checks
+    // the same things again — it has to, because this code runs on the
+    // user's machine and they can remove it.
+    if (values.length < 2 || values.some(Number.isNaN)) {
+      output.innerHTML = `<p class="err">Enter at least two numbers, separated by spaces or commas.</p>`
+      return
+    }
+
+    button.disabled = true
+    output.innerHTML = `<p class="muted">calculating on the server…</p>`
+
+    try {
+      const r = await getStats(values)
+
+      output.innerHTML = `
+        <table class="stats">
+          <tr><th>n</th><td>${r.n}</td></tr>
+          <tr><th>mean</th><td>${r.mean}</td></tr>
+          <tr><th>median</th><td>${r.median}</td></tr>
+          <tr><th>std. dev.</th><td>${r.stdev}</td></tr>
+          <tr><th>variance</th><td>${r.variance}</td></tr>
+          <tr><th>min / max</th><td>${r.min} / ${r.max}</td></tr>
+          <tr><th>Q1 / Q3</th><td>${r.q1} / ${r.q3}</td></tr>
+        </table>`
+    } catch (err) {
+      output.innerHTML = `<p class="err">${err.message}</p>`
+    } finally {
+      button.disabled = false
+    }
+  })
 }

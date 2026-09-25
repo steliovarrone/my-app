@@ -1,0 +1,24 @@
+# --- Node / front end ---
+node_modules/
+dist/
+
+# --- Python / API ---
+api/.venv/
+api/__pycache__/
+api/**/__pycache__/
+*.pyc
+
+# Azure Functions local state. local.settings.json holds connection strings
+# on a real project, so it stays out of git — the committed copy in this repo
+# is deliberately empty of secrets. From step 5 onward, treat it as private.
+api/local.settings.json
+.python_packages/
+bin/
+obj/
+
+# --- Local environment ---
+.env
+.env.local
+
+# --- OS noise ---
+.DS_Store

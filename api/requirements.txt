@@ -1,0 +1,11 @@
+# Azure installs these on the build agent and ships them with your function.
+# Keep this list short: every package here lengthens the cold start.
+#
+# azure-functions is the only hard requirement — it provides the decorators
+# and the HttpRequest/HttpResponse types.
+azure-functions
+
+# Everything used in function_app.py beyond that comes from the Python
+# standard library (json, statistics, platform, datetime), which needs no
+# entry here. If you later want numpy or pandas, add them below and they'll
+# be installed the same way.

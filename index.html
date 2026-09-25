@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>My Azure App</title>
   <meta name="description" content="A small app built step by step on Azure Static Web Apps.">
-  <!-- No <link rel="stylesheet"> any more. main.js imports the CSS, and Vite
-       injects the right tag here at build time. -->
 </head>
 <body>
 
@@ -21,11 +19,11 @@
   </header>
 
   <main class="wrap">
-    <span class="tag">Step 2</span>
-    <h1>Now there's a build step</h1>
+    <span class="tag">Step 3</span>
+    <h1>There's a server now</h1>
     <p class="lede">
-      The files in this repository are no longer the files Azure serves.
-      Vite turns them into <code>dist/</code> first.
+      Two Python functions run in an Azure datacentre. Your browser can ask
+      them things, but it can't see how they work.
     </p>
 
     <div class="meter" data-progress>
@@ -33,21 +31,50 @@
       <span class="meter-label" data-progress-label></span>
     </div>
 
-    <!-- Empty on purpose. main.js fills it from src/steps.js.
-         View source on the deployed page: it's still empty there too. -->
-    <ul class="steps" data-steps></ul>
-
+    <h2>Proof of life</h2>
     <div class="card">
-      <strong>Look in the page source.</strong> The list above is missing from the
-      HTML — it's built by JavaScript after load. The stylesheet link and script
-      tag, meanwhile, point at filenames with hashes in them that don't exist
-      anywhere in your repo. That gap between source and output is the whole
-      point of this step. Currently serving: <code data-build></code>.
+      <p style="margin:0">
+        <code data-status>…</code>
+      </p>
+      <p class="muted" style="margin:0.75rem 0 0">
+        Your browser has no idea what Python version it's running. It asked.
+      </p>
     </div>
+
+    <h2>Calculate something</h2>
+    <p>
+      These numbers are sent to <code>/api/stats</code>, computed by Python's
+      <code>statistics</code> module, and sent back. Nothing is calculated here.
+    </p>
+
+    <form class="card" data-stats-form>
+      <label for="values">Numbers, separated by spaces or commas</label>
+      <textarea id="values" rows="3">12 7 3 19 8 14 6 11 9 15</textarea>
+      <button type="submit">Send to the server</button>
+    </form>
+
+    <div data-stats-out></div>
+
+    <h2>Try to break it</h2>
+    <div class="card">
+      <p style="margin-top:0">
+        Enter one number, or text instead of numbers. You'll be stopped by the
+        JavaScript before anything is sent.
+      </p>
+      <p style="margin-bottom:0">
+        Now open DevTools and run
+        <code>await fetch('/api/stats',{method:'POST',headers:{'Content-Type':'application/json'},body:'{"values":["cat"]}'}).then(r=&gt;r.json())</code>
+        — bypassing the form entirely. The server refuses it anyway. That's the
+        difference between a convenience and a defence.
+      </p>
+    </div>
+
+    <h2>The ladder</h2>
+    <ul class="steps" data-steps></ul>
   </main>
 
   <footer class="site">
-    <div class="wrap">Running on Azure Static Web Apps · Free tier</div>
+    <div class="wrap">Static Web Apps · free tier · <code data-build></code></div>
   </footer>
 
   <script type="module" src="/src/main.js"></script>
