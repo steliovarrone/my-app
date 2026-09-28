@@ -1,10 +1,10 @@
 import './styles.css'
 
 import { steps, progress } from './steps.js'
-import { getStatus, getStats } from './api.js'
+import { getStatus, getStats, getHistory } from './api.js'
 
 // ---------------------------------------------------------------
-// Progress ladder (unchanged from step 2)
+// Progress ladder
 // ---------------------------------------------------------------
 const list = document.querySelector('[data-steps]')
 
@@ -29,12 +29,10 @@ if (meter) {
 }
 
 const stamp = document.querySelector('[data-build]')
-if (stamp) {
-  stamp.textContent = import.meta.env.PROD ? 'production build' : 'dev server'
-}
+if (stamp) stamp.textContent = import.meta.env.PROD ? 'production build' : 'dev server'
 
 // ---------------------------------------------------------------
-// Server status — proves there is a second machine involved
+// Server status
 // ---------------------------------------------------------------
 const statusOut = document.querySelector('[data-status]')
 
@@ -42,13 +40,63 @@ if (statusOut) {
   statusOut.textContent = 'asking the server…'
 
   getStatus()
-    .then((data) => {
-      statusOut.textContent = `${data.runtime} on ${data.platform} · ${data.server_time_utc}`
+    .then((d) => {
+      statusOut.textContent = `${d.runtime} on ${d.platform} · database ${d.database}`
     })
     .catch((err) => {
       statusOut.textContent = `couldn't reach the API — ${err.message}`
     })
 }
+
+// ---------------------------------------------------------------
+// Shared history
+// ---------------------------------------------------------------
+const historyOut = document.querySelector('[data-history]')
+
+// Anything a stranger typed is rendered as text, never as markup. These
+// values came out of a database that anyone on the internet can write to.
+const escape = (s) =>
+  String(s).replace(/[&<>"']/g, (c) =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]
+  )
+
+const time = (iso) =>
+  new Date(iso).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
+
+const renderHistory = async () => {
+  if (!historyOut) return
+
+  try {
+    const { runs, count } = await getHistory()
+
+    if (count === 0) {
+      historyOut.innerHTML = `<p class="muted">Nothing calculated yet today. Be first.</p>`
+      return
+    }
+
+    historyOut.innerHTML = `
+      <table class="stats">
+        <thead><tr><th>time (UTC)</th><th>n</th><th>mean</th><th>std. dev.</th></tr></thead>
+        <tbody>
+          ${runs
+            .map(
+              (r) => `<tr>
+                <td>${escape(time(r.ts))}</td>
+                <td>${escape(r.n)}</td>
+                <td>${escape(r.mean)}</td>
+                <td>${escape(r.stdev)}</td>
+              </tr>`
+            )
+            .join('')}
+        </tbody>
+      </table>
+      <p class="muted">${count} run${count === 1 ? '' : 's'} today, newest first.</p>`
+  } catch (err) {
+    historyOut.innerHTML = `<p class="err">History unavailable — ${escape(err.message)}</p>`
+  }
+}
+
+renderHistory()
 
 // ---------------------------------------------------------------
 // Statistics form
@@ -60,20 +108,13 @@ if (form) {
   const button = form.querySelector('button')
   const output = document.querySelector('[data-stats-out]')
 
-  const parse = (raw) =>
-    raw
-      .split(/[\s,;]+/)      // split on spaces, commas, semicolons, newlines
-      .filter(Boolean)
-      .map(Number)
+  const parse = (raw) => raw.split(/[\s,;]+/).filter(Boolean).map(Number)
 
   form.addEventListener('submit', async (event) => {
-    event.preventDefault()   // stop the browser doing a full page reload
+    event.preventDefault()
 
     const values = parse(input.value)
 
-    // A client-side check for fast feedback. Note that the server checks
-    // the same things again — it has to, because this code runs on the
-    // user's machine and they can remove it.
     if (values.length < 2 || values.some(Number.isNaN)) {
       output.innerHTML = `<p class="err">Enter at least two numbers, separated by spaces or commas.</p>`
       return
@@ -94,9 +135,14 @@ if (form) {
           <tr><th>variance</th><td>${r.variance}</td></tr>
           <tr><th>min / max</th><td>${r.min} / ${r.max}</td></tr>
           <tr><th>Q1 / Q3</th><td>${r.q1} / ${r.q3}</td></tr>
-        </table>`
+        </table>
+        ${r.saved ? '' : '<p class="err">Calculated, but not saved — the database write failed.</p>'}`
+
+      // The shared list just changed. Pull it again so this visitor sees
+      // their own entry appear alongside everyone else's.
+      renderHistory()
     } catch (err) {
-      output.innerHTML = `<p class="err">${err.message}</p>`
+      output.innerHTML = `<p class="err">${escape(err.message)}</p>`
     } finally {
       button.disabled = false
     }

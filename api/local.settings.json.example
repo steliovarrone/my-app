@@ -1,0 +1,9 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "AzureWebJobsStorage": "",
+    "COSMOS_URI": "https://YOUR-ACCOUNT.documents.azure.com:443/",
+    "COSMOS_KEY": "paste-your-primary-key-here"
+  }
+}

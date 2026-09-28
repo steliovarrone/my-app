@@ -3,7 +3,7 @@ export const steps = [
   { n: 1,  label: 'Multiple pages, CSS, routing',     done: true  },
   { n: 2,  label: 'A build step with Vite',           done: true  },
   { n: 3,  label: 'A serverless API',                 done: true  },
-  { n: 4,  label: 'A database',                       done: false },
+  { n: 4,  label: 'A database',                       done: true  },
   { n: 5,  label: 'Secrets and config',               done: false },
   { n: 6,  label: 'Authentication',                   done: false },
   { n: 7,  label: 'Custom domain and environments',   done: false },

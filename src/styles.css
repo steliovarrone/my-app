@@ -114,7 +114,6 @@ a { color: var(--accent); }
 .muted { color: var(--muted); font-size: 0.9rem; }
 .err   { color: var(--danger); font-size: 0.95rem; margin: 0.5rem 0; }
 
-/* --- Progress meter --------------------------------------------- */
 .meter { margin: 1.5rem 0 2rem; }
 .meter-track { height: 8px; background: var(--border); border-radius: 999px; overflow: hidden; }
 .meter-bar {
@@ -126,7 +125,6 @@ a { color: var(--accent); }
 }
 .meter-label { display: block; margin-top: 0.5rem; font-size: 0.85rem; color: var(--muted); }
 
-/* --- Step list --------------------------------------------------- */
 ul.steps { list-style: none; padding: 0; margin: 0; }
 ul.steps li {
   display: flex;
@@ -152,7 +150,6 @@ ul.steps li.done { color: var(--muted); }
   font-variant-numeric: tabular-nums;
 }
 
-/* --- Form -------------------------------------------------------- */
 form.card label {
   display: block;
   font-size: 0.85rem;
@@ -193,11 +190,11 @@ form.card button {
 form.card button:hover:not(:disabled) { filter: brightness(1.1); }
 form.card button:disabled { opacity: 0.5; cursor: progress; }
 
-/* --- Results table ----------------------------------------------- */
+/* --- Tables ------------------------------------------------------ */
 table.stats {
   width: 100%;
   border-collapse: collapse;
-  margin: 1rem 0 0;
+  margin: 0;
   font-variant-numeric: tabular-nums;
 }
 table.stats th,
@@ -209,6 +206,13 @@ table.stats td {
 }
 table.stats th { color: var(--muted); font-size: 0.9rem; width: 9rem; }
 table.stats td { font-family: var(--mono); font-size: 0.95rem; }
+
+/* The history table has real column headers rather than row labels, so the
+   fixed label width and the last border need undoing. */
+table.stats thead th { width: auto; font-size: 0.8rem; letter-spacing: 0.02em; }
+table.stats tbody tr:last-child td { border-bottom: 0; }
+
+[data-stats-out] table.stats { margin-top: 1rem; }
 
 footer.site {
   border-top: 1px solid var(--border);
